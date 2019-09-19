@@ -4,6 +4,8 @@ using Castle.MicroKernel.Lifestyle.Contextual;
 using Castle.MicroKernel.Registration;
 using NUnit.Framework;
 
+#pragma warning disable 618     // to ignore the warning: "CS0618 'ContextualLifestyle' is obsolete: 'Use ScopedLifestyleManager instead'"
+
 namespace Castle.MicroKernel.Lifestyle.Tests.Contextual
 {
 	[TestFixture]
@@ -28,8 +30,8 @@ namespace Castle.MicroKernel.Lifestyle.Tests.Contextual
 		[Test]
 		public void Should_resolve_the_same_instances_when_inside_the_same_context()
 		{
-			kernel.Register(Component.For<ComponentA>().LifeStyle.Custom(typeof(ContextualLifestyle)));
-			using (new ContainerContext(kernel))
+            kernel.Register(Component.For<ComponentA>().LifeStyle.Custom(typeof(ContextualLifestyle)));
+            using (new ContainerContext(kernel))
 			{
 				var c1 = kernel.Resolve<ComponentA>();
 				var c2 = kernel.Resolve<ComponentA>();
