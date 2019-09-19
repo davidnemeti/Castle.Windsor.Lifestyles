@@ -7,7 +7,10 @@ using Castle.MicroKernel.Lifestyle.Scoped;
 
 namespace Castle.MicroKernel.Lifestyle {
     public class HttpApplicationScopeAccessor: IScopeAccessor {
+#pragma warning disable IDE0051 // Remove unused private members
+        // ReSharper disable once InconsistentNaming
         private const string lifetimeScopeKey = "HttpApplicationScopeAccessor_LifetimeScope";
+#pragma warning restore IDE0051 // Remove unused private members
 
         private readonly Func<HttpContextBase> ContextProvider = () => new HttpContextWrapper(HttpContext.Current);
 

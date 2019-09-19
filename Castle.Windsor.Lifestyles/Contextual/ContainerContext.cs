@@ -35,8 +35,7 @@ namespace Castle.MicroKernel.Lifestyle.Contextual
 
 		public object GetInstance(string name, Type type)
 		{
-			object instance;
-			contextualComponents.TryGetValue(new Pair<string, Type>(name, type), out instance);
+            contextualComponents.TryGetValue(new Pair<string, Type>(name, type), out var instance);
 			return instance;
 		}
 

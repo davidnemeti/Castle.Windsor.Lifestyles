@@ -12,7 +12,7 @@ namespace Castle.MicroKernel.Lifestyle.Contextual
 		{
 			lock (contexts)
 			{
-				var stack = getContextHistory(Thread.CurrentThread);
+				var stack = GetContextHistory(Thread.CurrentThread);
 				stack.Push(context);
 			}
 		}
@@ -21,7 +21,7 @@ namespace Castle.MicroKernel.Lifestyle.Contextual
 		{
 			lock (contexts)
 			{
-				var stack = getContextHistory(Thread.CurrentThread);
+				var stack = GetContextHistory(Thread.CurrentThread);
 				var lastContext = stack.Pop();
 				if (lastContext != context)
 				{
@@ -35,15 +35,14 @@ namespace Castle.MicroKernel.Lifestyle.Contextual
 		{
 			lock (contexts)
 			{
-				var stack = getContextHistory(Thread.CurrentThread);
+				var stack = GetContextHistory(Thread.CurrentThread);
 				return stack.Count == 0 ? null : stack.Peek();
 			}
 		}
 
-		private Stack<ContainerContext> getContextHistory(Thread thread)
+		private Stack<ContainerContext> GetContextHistory(Thread thread)
 		{
-			Stack<ContainerContext> contextHistory;
-			if (contexts.TryGetValue(thread, out contextHistory) == false)
+            if (contexts.TryGetValue(thread, out var contextHistory) == false)
 			{
 				contextHistory = new Stack<ContainerContext>();
 				contexts.Add(thread, contextHistory);

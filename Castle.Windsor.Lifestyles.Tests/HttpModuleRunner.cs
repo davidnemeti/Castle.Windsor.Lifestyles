@@ -84,9 +84,7 @@ namespace Castle.MicroKernel.Lifestyle.Tests {
             public static readonly object EventEndRequestKey = GetEventKey("EndRequest");
 
             public void FireEndRequest() {
-                var handler = (EventHandler) Events[EventEndRequestKey];
-                if (handler != null)
-                    handler(this, null);
+                ((EventHandler)Events[EventEndRequestKey])?.Invoke(this, null);
             }
         }
     }

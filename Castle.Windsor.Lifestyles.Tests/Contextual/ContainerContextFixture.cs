@@ -23,9 +23,12 @@ namespace Castle.MicroKernel.Lifestyle.Tests.Contextual
 		public void Should_register_IContainerContextStore_when_first_context_is_created()
 		{
 			kernel.Register(Component.For<ComponentA>().LifeStyle.Custom(typeof(ContextualLifestyle)));
-			new ContainerContext(kernel);
-			Assert.That(kernel.HasComponent(typeof(IContainerContextStore)));
-		}
+
+            using (new ContainerContext(kernel))
+            {
+                Assert.That(kernel.HasComponent(typeof(IContainerContextStore)));
+            }
+        }
 
 		[Test]
 		public void Should_resolve_the_same_instances_when_inside_the_same_context()
@@ -129,10 +132,9 @@ namespace Castle.MicroKernel.Lifestyle.Tests.Contextual
 			var countInForegroundThread = 0;
 
 			using (new ContainerContext(kernel))
+            using (var autoResetEvent = new AutoResetEvent(false))
 			{
-				var autoResetEvent = new AutoResetEvent(false);
-
-				ThreadPool.QueueUserWorkItem(delegate
+                ThreadPool.QueueUserWorkItem(delegate
 				{
 					using (new ContainerContext(kernel))
 					{
@@ -181,34 +183,38 @@ namespace Castle.MicroKernel.Lifestyle.Tests.Contextual
 			object instanceInForegroundThread = null;
 			var countInForegroundThread = 0;
 
-			var are = new AutoResetEvent(false);
+            using (var are = new AutoResetEvent(false))
+            {
 
-			ThreadPool.QueueUserWorkItem(delegate
-				{
-					for (int i = 0; i < 5000; i++)
-					{
-						var a = kernel.Resolve<ComponentA>();
-						if (a != instanceInForegroundThread)
-						{
-							countInForegroundThread++;
-							instanceInForegroundThread = a;
-						}
-					}
-					are.Set();
-				});
+                ThreadPool.QueueUserWorkItem(delegate
+                {
+                    for (int i = 0; i < 5000; i++)
+                    {
+                        var a = kernel.Resolve<ComponentA>();
+                        if (a != instanceInForegroundThread)
+                        {
+                            countInForegroundThread++;
+                            instanceInForegroundThread = a;
+                        }
+                    }
 
-			for (int i = 0; i < 5000; i++)
-			{
-				var a = kernel.Resolve<ComponentA>();
-				if (a != instanceInBackgroundThread)
-				{
-					countInBackgroundThread++;
-					instanceInBackgroundThread = a;
-				}
-			}
-			are.WaitOne();
+                    are.Set();
+                });
 
-			Assert.That(countInBackgroundThread, Is.EqualTo(5000));
+                for (int i = 0; i < 5000; i++)
+                {
+                    var a = kernel.Resolve<ComponentA>();
+                    if (a != instanceInBackgroundThread)
+                    {
+                        countInBackgroundThread++;
+                        instanceInBackgroundThread = a;
+                    }
+                }
+
+                are.WaitOne();
+            }
+
+            Assert.That(countInBackgroundThread, Is.EqualTo(5000));
 			Assert.That(countInForegroundThread, Is.EqualTo(5000));
 			Assert.That(instanceInBackgroundThread, Is.Not.SameAs(instanceInForegroundThread));
 		}
