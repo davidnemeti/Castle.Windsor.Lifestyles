@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using Castle.Facilities.AspNet.SystemWeb;
 
 namespace Castle.MicroKernel.Lifestyle {
     public class PerWebRequestLifestyleModuleUtils {

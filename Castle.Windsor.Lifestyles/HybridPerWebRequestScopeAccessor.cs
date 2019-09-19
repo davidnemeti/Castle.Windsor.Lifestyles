@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Castle.MicroKernel.Lifestyle.Scoped;
 using System.Web;
+using Castle.Facilities.AspNet.SystemWeb;
 
 namespace Castle.MicroKernel.Lifestyle {
     public class HybridPerWebRequestScopeAccessor: IScopeAccessor {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Castle.Facilities.AspNet.SystemWeb;
 using Castle.MicroKernel.Lifestyle.Scoped;
 
 namespace Castle.MicroKernel.Lifestyle {

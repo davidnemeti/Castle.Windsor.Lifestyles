@@ -4,6 +4,7 @@ using Castle.MicroKernel.Registration;
 using System.IO;
 using System.Web.Hosting;
 using System.Web;
+using Castle.Facilities.AspNet.SystemWeb;
 
 namespace Castle.MicroKernel.Lifestyle.Tests {
     [TestFixture]
