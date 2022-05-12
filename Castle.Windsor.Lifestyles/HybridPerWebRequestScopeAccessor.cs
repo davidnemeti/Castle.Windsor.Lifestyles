@@ -17,7 +17,18 @@ namespace Castle.MicroKernel.Lifestyle {
 
         public ILifetimeScope GetScope(Context.CreationContext context) {
             if (HttpContext.Current != null && PerWebRequestLifestyleModuleUtils.IsInitialized)
-                return webRequestScopeAccessor.GetScope(context);
+            {
+                try
+                {
+                    return webRequestScopeAccessor.GetScope(context);
+                }
+                catch (ObjectDisposedException)
+                {
+                    // If we get here, it means that we have a HttpContext, but the web request has ended.
+                    // In this case we fall back to the secondary scope accessor.
+                }
+            }
+
             return secondaryScopeAccessor.GetScope(context);
         }
 
