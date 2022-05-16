@@ -40,10 +40,16 @@ namespace Castle.MicroKernel.Lifestyle {
         /// </exception>
         private bool IsScopeDisposed(ILifetimeScope scope)
         {
-            var scopeCacheField = scope.GetType().GetField("scopeCache", BindingFlags.NonPublic | BindingFlags.Instance) ??
-                throw new InvalidOperationException($"Castle.Windsor version has been updated. Please fix the code of {GetType().Assembly.FullName}");
+            const string SCOPE_CACHE_FIELD_NAME = "scopeCache";
 
-            var scopeCache = (IScopeCache)scopeCacheField.GetValue(scope);
+            var scopeCacheField = scope.GetType().GetField(SCOPE_CACHE_FIELD_NAME, BindingFlags.NonPublic | BindingFlags.Instance) ??
+                throw new InvalidOperationException($"{GetWindsorVersionErrorMessage()} ('{SCOPE_CACHE_FIELD_NAME}' field not found in '{scope.GetType()}')");
+
+            var scopeCacheFieldValue = scopeCacheField.GetValue(scope) ??
+                throw new InvalidOperationException($"{GetWindsorVersionErrorMessage()} ('{SCOPE_CACHE_FIELD_NAME}' field's value is null)");
+
+            var scopeCache = scopeCacheFieldValue as IScopeCache ??
+                throw new InvalidOperationException($"{GetWindsorVersionErrorMessage()} ('{SCOPE_CACHE_FIELD_NAME}' field's type is '{scopeCacheField.FieldType}' instead of '{typeof(IScopeCache)}')");
 
             try
             {
@@ -55,6 +61,8 @@ namespace Castle.MicroKernel.Lifestyle {
             {
                 return true;
             }
+
+            string GetWindsorVersionErrorMessage() => $"Castle.Windsor version has been updated. Please fix the code of {GetType().Assembly.FullName}";
         }
     }
 }
